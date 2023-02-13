@@ -10,6 +10,7 @@ const log = SimpleNodeLogger.createSimpleLogger('logs/questions.log');
 interface MessageContext extends Context<Update> {
   content?: string;
   username?: string;
+  messageId?: number;
 }
 
 const bot_token: string = process.env.TELEGRAM_TOKEN as string;
@@ -20,12 +21,13 @@ log.info('Bot started at: ' + new Date().toISOString());
 bot.use((ctx, next) => {
   ctx.content = (ctx.message as Message.TextMessage)?.text;
   ctx.username = ctx.message?.from?.username;
+  ctx.messageId = ctx.message?.message_id;
   return next();
 });
 
 bot.start((ctx) => {
   log.info(`${ctx.username} - Start`);
-  ctx.reply(`Hola ${ctx.username}!, ¿En qué puedo ayudarte?`);
+  ctx.reply(`Hola @${ctx.username}!, ¿En qué puedo ayudarte?`);
 });
 
 bot.command('ask', async (ctx) => {
@@ -35,9 +37,9 @@ bot.command('ask', async (ctx) => {
   if (parsed_message) {
     const answer = await get_completions(parsed_message) as string;
     log.info(`${ctx.username} - Answer: ${answer}`);
-    ctx.reply(answer);
+    ctx.reply(answer, { reply_to_message_id: ctx.messageId });
   } else {
-    ctx.reply('Debes realizar una pregunta');
+    ctx.reply('Debes realizar una pregunta', { reply_to_message_id: ctx.messageId });
   }
 });
 
