@@ -3,7 +3,7 @@ dotenv.config();
 
 import { Configuration, OpenAIApi } from "openai";
 
-const TEMPERATURE = 0.25;
+const TEMPERATURE = 0.15;
 const MAX_TOKENS = 300;
 const COMPLETITION_MODEL = "text-davinci-003";
 const BASE_PROMPT = "Soy un bot altamente inteligente de la Pontificia Universidad Catolica de Chile (PUC / UC) que responde preguntas generales, computación e ingenieria.";
