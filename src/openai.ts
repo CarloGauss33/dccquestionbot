@@ -3,13 +3,10 @@ dotenv.config();
 
 import { Configuration, OpenAIApi } from "openai";
 
-const TEMPERATURE = 0.2;
+const TEMPERATURE = 0.25;
 const MAX_TOKENS = 300;
 const COMPLETITION_MODEL = "text-davinci-003";
-const BASE_PROMPT = "Soy un bot altamente inteligente que responde preguntas con especial " +
-                    "enfasis en ciencias de la computación e ingeniería. Si me haces una pregunta " +
-                    "que tenga una respuesta clara, te daré la respuesta. Si me haces una pregunta sin sentido " +
-                    ", trampa o sin respuesta clara, responderé con 'Por favor, realiza una pregunta'";
+const BASE_PROMPT = "Soy un bot altamente inteligente que responde preguntas generales, computación e ingenieria.";
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
