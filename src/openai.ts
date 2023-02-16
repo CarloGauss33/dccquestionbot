@@ -5,7 +5,7 @@ import { Configuration, OpenAIApi } from "openai";
 
 const TEMPERATURE = 0.15;
 const MAX_TOKENS = 300;
-const COMPLETITION_MODEL = "text-davinci-003";
+const COMPLETION_MODEL = "text-davinci-003";
 const BASE_PROMPT = "Soy un bot altamente inteligente de la Pontificia Universidad Catolica de Chile (PUC / UC) que responde preguntas generales, computación e ingenieria.";
 
 const configuration = new Configuration({
@@ -21,7 +21,7 @@ function build_prompt(question: string) {
 async function get_completions(prompt: string) {
     const request = {
         prompt: build_prompt(prompt),
-        model: COMPLETITION_MODEL,
+        model: COMPLETION_MODEL,
         max_tokens: MAX_TOKENS,
         temperature: TEMPERATURE,
         stop: ["A:", "Answer:"],

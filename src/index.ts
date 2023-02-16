@@ -33,7 +33,7 @@ bot.start((ctx) => {
 bot.command('ask', async (ctx) => {
   log.info(`${ctx.username} - Ask: ${ctx.content}`);
   const parsed_message = ctx.content?.replace('/ask', '');
-  
+
   if (parsed_message) {
     const answer = await get_completions(parsed_message) as string;
     log.info(`${ctx.username} - Answer: ${answer}`);
