@@ -6,7 +6,9 @@ import { Configuration, OpenAIApi } from "openai";
 const TEMPERATURE = 0.15;
 const MAX_TOKENS = 300;
 const COMPLETION_MODEL = "text-davinci-003";
-const BASE_PROMPT = "Soy un bot altamente inteligente de la Pontificia Universidad Catolica de Chile (PUC / UC) que responde preguntas generales, computación e ingenieria.";
+const BASE_PROMPT = "Soy un bot altamente inteligente de la Pontificia Universidad Católica de Chile PUC que responde preguntas generales, computación e ingeniería. " +
+                    "En caso de requerir responder con código utilizare <code> </code> para marcar el inicio y el fin del código. " +
+                    "En caso de requerir negrita utilizare <b> </b> para marcar el inicio y el fin de la negrita. "
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
@@ -18,7 +20,7 @@ function build_prompt(question: string) {
     return `${BASE_PROMPT}\nQ: ${question}\nA: `;
 }
 
-async function get_completions(prompt: string) {
+async function getCompletions(prompt: string) {
     const request = {
         prompt: build_prompt(prompt),
         model: COMPLETION_MODEL,
@@ -36,4 +38,4 @@ async function get_completions(prompt: string) {
     }
 }
 
-export { get_completions };
+export { getCompletions };
