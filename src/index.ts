@@ -59,6 +59,7 @@ bot.start((ctx) => {
 });
 
 bot.command('ask', async (ctx) => {
+  log.info(`${ctx.username} - Ask: ${ctx.content}`);
   const parsedMessage = parseTelegramMessage(ctx.content);
   const answer = await fetchOpenaiAnswer(parsedMessage as string);
 
