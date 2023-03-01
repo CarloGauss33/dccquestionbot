@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import SimpleNodeLogger from 'simple-node-logger';
 import { Context, Telegraf, Format } from 'telegraf';
 import { Update, Message } from 'typegram';
-import { getCompletions } from './openai';
+import { getCompletions, getChatAnswer } from './openai';
 
 dotenv.config();
 
@@ -23,13 +23,23 @@ const telegram = bot.telegram;
 
 log.info('Bot started at: ' + new Date().toISOString());
 
-async function fetchOpenaiAnswer(question: string) {
-  if (question.length > 0) {
-    return await getCompletions(question) as string;
+async function fetchOpenaiAnswer(
+  question: string,
+  strategy: 'gpt' | 'chat' = 'gpt',
+  username: string = '' ) {
+  if (question.length < 1) {
+    return 'Debes realizar una pregunta';
   }
 
-  return 'Debes realizar una pregunta';
+  if (strategy === 'gpt') {
+    return await getCompletions(question) as string;
+  } else if (strategy === 'chat') {
+    return await getChatAnswer(question, username) as string;
+  } else {
+    return 'No se pudo obtener una respuesta';
+  }
 }
+
 
 async function sendGoodbyeMessage() {
   if (!BROADCAST_CHAT_ID) {
@@ -58,8 +68,8 @@ bot.start((ctx) => {
   ctx.reply(`Hola @${ctx.username}!, ¿En qué puedo ayudarte?`);
 });
 
-bot.command('ask', async (ctx) => {
-  log.info(`${ctx.username} - Ask: ${ctx.content}`);
+bot.command('ask-gpt', async (ctx) => {
+  log.info(`${ctx.username} - AskGpt: ${ctx.content}`);
   const parsedMessage = parseTelegramMessage(ctx.content);
   const answer = await fetchOpenaiAnswer(parsedMessage as string);
 
@@ -71,6 +81,18 @@ bot.command('ask', async (ctx) => {
   );
 });
 
+bot.command('ask', async (ctx) => {
+  log.info(`${ctx.username} - Ask: ${ctx.content}`);
+  const parsedMessage = parseTelegramMessage(ctx.content);
+  const answer = await fetchOpenaiAnswer(parsedMessage as string, 'chat', ctx.username as string);
+
+  log.info(`${ctx.username} - Answer: ${answer}`);
+
+  await ctx.reply(
+    answer,
+    { reply_to_message_id: ctx.messageId }
+  );
+});
 
 bot.launch();
 process.once('SIGINT', async () => {
