@@ -9,17 +9,17 @@ const db = new Database(DB_PATH);
 
 interface Message {
     username: string;
-    content: string;
-    role: string;
+    question: string;
+    answer: string;
     timestamp: string;
 };
 
 db.serialize(() => {
-    db.run('CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, content TEXT NOT NULL, role TEXT NOT NULL, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)');
+    db.run('CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, question TEXT NOT NULL, answer TEXT NOT NULL, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)');
 });
 
-export function insertMessage(username: string, content: string, role: string) {
-    db.run('INSERT INTO messages (username, content, role) VALUES (?, ?, ?)', [username, content, role]);
+export function insertMessage(username: string, question: string, answer: string) {
+    db.run('INSERT INTO messages (username, question, answer) VALUES (?, ?, ?)', [username, question, answer]);
 }
 
 export function getLastMessagesForUser(username: string, n: number = 12) {

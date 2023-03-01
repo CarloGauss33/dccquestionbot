@@ -33,11 +33,11 @@ async function buildChatHistory(username: string = '', nMessages: number = 12) {
                          await getLastMessagesForUser(username, nMessages);
 
     const messages = lastMessages.map((message) => {
-        return {
-            'role': message.role,
-            'content': message.content,
-        } as ChatCompletionRequestMessage;
-    });
+        return [
+            { 'role': 'user', 'content': message.question },
+            { 'role': 'assistant', 'content': message.answer },
+        ];
+    }).reverse().flat();
 
     return messages;
 }
@@ -51,8 +51,7 @@ async function buildChatMessages(question: string, username: string="") {
 }
 
 function storeConversation(username: string, question: string, answer: string) {
-    insertMessage(username, question, 'user');
-    insertMessage(username, answer, 'assistant');
+    insertMessage(username, question, answer);
 }
 
 async function getCompletions(prompt: string) {
@@ -78,7 +77,7 @@ async function getChatAnswer(question: string, username: string="") {
     const messages = await buildChatMessages(processedQuestion, username);
     const request = {
         model: CHAT_MODEL,
-        temperature: 0.15,
+        temperature: 0.1,
         messages: messages,
     };
 
