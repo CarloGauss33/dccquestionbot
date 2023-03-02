@@ -1,6 +1,6 @@
 # DCCQuestionBot
 
-A OpenAI GPT-3 powered bot to answer questions via Telegram in a educational context.
+A OpenAI GPT-3.5 (ChatGPT) powered bot to answer questions via Telegram in a educational context.
 
 ### Requirements
 
