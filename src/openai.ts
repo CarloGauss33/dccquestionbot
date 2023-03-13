@@ -22,12 +22,10 @@ async function getCompletions(prompt: string) {
         temperature: TEMPERATURE,
         stop: ["A:", "Answer:"],
     };
-
-    const response = await openai.createCompletion(request);
-
-    if (response.data.choices) {
+    try {
+        const response = await openai.createCompletion(request);
         return response.data.choices[0].text;
-    } else {
+    } catch (error) {
         return "No se pudo obtener una respuesta";
     }
 }
@@ -41,14 +39,14 @@ async function getChatAnswer(question: string, username: string="") {
         messages: messages,
     };
 
-    const response = await openai.createChatCompletion(request);
+    try {
+        const response = await openai.createChatCompletion(request);
 
-    if (response.data.choices) {
         const answer = response.data.choices[0].message?.content as string;
         storeConversation(username, processedQuestion, answer);
 
         return answer;
-    } else {
+    } catch (error) {
         return "No se pudo obtener una respuesta";
     }
 }
