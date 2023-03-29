@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import SimpleNodeLogger from 'simple-node-logger';
 import { Context, Telegraf, Format } from 'telegraf';
 import { Update, Message } from 'typegram';
-import { getCompletions, getChatAnswer } from './openai';
+import { getCompletions, getChatAnswer, getGPT4answer } from './openai';
 
 dotenv.config();
 
@@ -54,7 +54,7 @@ function parseTelegramMessage(message: string | undefined) {
     return '';
   }
 
-  return message.replace('/ask', '').replace(`@${BOT_USERNAME}`, '');
+  return message.replace('/ask', '').replace(`@${BOT_USERNAME}`, '').replace('/q', '').trim();
 }
 
 bot.use((ctx, next) => {
@@ -85,6 +85,19 @@ bot.command('ask', async (ctx) => {
   log.info(`${ctx.username} - Ask: ${ctx.content}`);
   const parsedMessage = parseTelegramMessage(ctx.content);
   const answer = await fetchOpenaiAnswer(parsedMessage as string, 'chat', ctx.username as string);
+
+  log.info(`${ctx.username} - Answer: ${answer}`);
+
+  await ctx.reply(
+    answer,
+    { reply_to_message_id: ctx.messageId }
+  );
+});
+
+bot.command('q', async (ctx) => {
+  log.info(`${ctx.username} - AskGpt4: ${ctx.content}`);
+  const parsedMessage = parseTelegramMessage(ctx.content);
+  const answer = await getGPT4answer(parsedMessage as string);
 
   log.info(`${ctx.username} - Answer: ${answer}`);
 
