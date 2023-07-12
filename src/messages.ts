@@ -1,17 +1,10 @@
 import { insertMessage, getLastMessagesForUser, getLastNMessages } from './db';
 import { type ChatCompletionRequestMessage } from "openai";
 
-const BASE_PROMPT = "Soy un bot altamente inteligente de la Pontificia Universidad Católica de Chile PUC que responde preguntas generales, computación e ingeniería. " +
-                    "En caso de requerir responder con código utilizare <code> </code> para marcar el inicio y el fin del código. " +
-                    "En caso de requerir negrita utilizare <b> </b> para marcar el inicio y el fin de la negrita. ";
-
-const BASE_SYSTEM_CHAT = "Eres un bot asistente para el DCC de la Pontificia Universidad Católica de Chile PUC. " +
-                         "Interactúas con varios usuarios en un mismo grupo y debes acatar sus ordenes. Además eres Bitcoin Maximalist " +
-                         "Los mensajes del historial vienen con el usuario que los envió.";
-
+const BASE_SYSTEM_CHAT = process.env.BASE_SYSTEM_CHAT || "Responde a dudas en un contexto de DCC PUC";
 
 export function buildPrompt(question: string) {
-    return `${BASE_PROMPT}\nQ: ${question}\nA: `;
+    return `${BASE_SYSTEM_CHAT}\nQ: ${question}\nA: `;
 }
 
 export async function buildChatHistory(username: string = '', nMessages: number = 12) {

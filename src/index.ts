@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import SimpleNodeLogger from 'simple-node-logger';
 import { Context, Telegraf, Format } from 'telegraf';
 import { Update, Message } from 'typegram';
-import { getCompletions, getChatAnswer } from './openai';
+import { getChatAnswer } from './openai';
 
 dotenv.config();
 
@@ -25,19 +25,12 @@ log.info('Bot started at: ' + new Date().toISOString());
 
 async function fetchOpenaiAnswer(
   question: string,
-  strategy: 'gpt' | 'chat' = 'gpt',
   username: string = '' ) {
   if (question.length < 1) {
     return 'Debes realizar una pregunta';
   }
 
-  if (strategy === 'gpt') {
-    return await getCompletions(question) as string;
-  } else if (strategy === 'chat') {
-    return await getChatAnswer(question, username) as string;
-  } else {
-    return 'No se pudo obtener una respuesta';
-  }
+  return await getChatAnswer(question, username) as string;
 }
 
 
@@ -68,23 +61,13 @@ bot.start((ctx) => {
   ctx.reply(`Hola @${ctx.username}!, ¿En qué puedo ayudarte?`);
 });
 
-bot.command('ask-gpt', async (ctx) => {
-  log.info(`${ctx.username} - AskGpt: ${ctx.content}`);
-  const parsedMessage = parseTelegramMessage(ctx.content);
-  const answer = await fetchOpenaiAnswer(parsedMessage as string);
-
-  log.info(`${ctx.username} - Answer: ${answer}`);
-
-  await ctx.replyWithHTML(
-    answer,
-    { reply_to_message_id: ctx.messageId }
-  );
-});
-
 bot.command('ask', async (ctx) => {
   log.info(`${ctx.username} - Ask: ${ctx.content}`);
   const parsedMessage = parseTelegramMessage(ctx.content);
-  const answer = await fetchOpenaiAnswer(parsedMessage as string, 'chat', ctx.username as string);
+  const answer = await fetchOpenaiAnswer(
+    parsedMessage as string,
+    ctx.username as string
+  );
 
   log.info(`${ctx.username} - Answer: ${answer}`);
 

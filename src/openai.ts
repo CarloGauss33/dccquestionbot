@@ -14,22 +14,6 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-async function getCompletions(prompt: string) {
-    const request = {
-        prompt: buildPrompt(prompt),
-        model: COMPLETION_MODEL,
-        max_tokens: MAX_TOKENS,
-        temperature: TEMPERATURE,
-        stop: ["A:", "Answer:"],
-    };
-    try {
-        const response = await openai.createCompletion(request);
-        return response.data.choices[0].text;
-    } catch (error) {
-        return "No se pudo obtener una respuesta";
-    }
-}
-
 async function getChatAnswer(question: string, username: string="") {
     const processedQuestion = `${username}: ${question}`;
     const messages = await buildChatMessages(processedQuestion, username);
@@ -51,4 +35,4 @@ async function getChatAnswer(question: string, username: string="") {
     }
 }
 
-export { getCompletions, getChatAnswer };
+export { getChatAnswer };
