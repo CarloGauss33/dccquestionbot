@@ -20,7 +20,6 @@ async function getCourseCodesFromCsv() {
   }
 
   return courseCodes;
-
 }
 
 async function getPage(courseCode : string) {
@@ -29,7 +28,6 @@ async function getPage(courseCode : string) {
   const response = await axios.get(uri);
   return response.data;
 }
-
 
 async function getCourseReviews(courseCode : string) {
 
@@ -46,6 +44,7 @@ async function getCourseReviews(courseCode : string) {
       if(p.textContent)
         reviews.push(p.textContent.replace(/[\r\n]/gm, ''));
     });
+
     return reviews;
   }
   catch (error){
