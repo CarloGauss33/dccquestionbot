@@ -28,7 +28,7 @@ async function main() {
         });
 
     fs.createReadStream(CSV_REVIEWS_PATH)
-    .pipe(parse({ delimiter: ';', from_line: 2 }))
+    .pipe(parse({ delimiter: ';', from_line: 2, relax_quotes: true }))
     .on('data', async (row) => {
         const [code, username, content] = row;
         
