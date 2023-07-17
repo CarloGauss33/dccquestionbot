@@ -22,7 +22,7 @@ async function main() {
                 }
             })
         }).on('end', async () => {
-            console.log('CSV file successfully processed');
+            console.log('CSV courses file successfully processed');
         }).on('error', (err) => {
             console.error(err);
         });
@@ -31,11 +31,10 @@ async function main() {
     .pipe(parse({ delimiter: ';', from_line: 2, relax_quotes: true }))
     .on('data', async (row) => {
         const [code, username, content] = row;
-        
-        await addCourseReview(code, username, content)
+        await addCourseReview(code, content, username)
 
     }).on('end', async () => {
-        console.log('CSV file successfully processed');
+        console.log('CSV reviews file successfully processed');
     }).on('error', (err) => {
         console.error(err);
     });
