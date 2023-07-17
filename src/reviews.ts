@@ -69,5 +69,9 @@ export async function getCoursesInMessage(content: string) {
     ] as any[];
 
     const coursesCodes = await generateChatAnswer(chatMessages, '', "gpt-4");
+
+    if(coursesCodes == "No se pudo obtener una respuesta")
+        return []
+
     return coursesCodes.split(',').map((code) => code.trim());
 }

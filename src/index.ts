@@ -129,8 +129,6 @@ bot.command('review', async (ctx) => {
     response.push(answer);
   }
 
-  
-
   if (response.length === 0) {
     await ctx.reply(
       'No se encontraron cursos en el mensaje',
