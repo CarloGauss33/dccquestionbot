@@ -71,11 +71,10 @@ async function getCsvFormattedReviews(courseCodes : string[])
   const formattedReviews : string[] = [];
 
   for (const courseCode of courseCodes) {
-    console.log(courseCode)
     const reviews = await getCourseReviews(courseCode);
 
     if(reviews.length > 0){
-
+      console.log(courseCode)
       const csvReview = reviews.map(review => {
         const username = extractUsernameFromReview(review);
         const reviewWithoutUsername = removeUsernameFromReview(review);
