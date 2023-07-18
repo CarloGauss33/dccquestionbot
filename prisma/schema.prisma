@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector]
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  description String?
+  reviews     Review[]
+}
+
+model Review {
+  id      String   @id @default(uuid())
+  course  Course   @relation(fields: [courseId], references: [id])
+  courseId String
+  content String?
+  processedContent String?
+  username String?
+  contentVector Unsupported("vector(1536)")?
+}
