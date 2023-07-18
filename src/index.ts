@@ -128,7 +128,7 @@ bot.command('review', async (ctx) => {
   }
 
   await ctx.reply(
-    response.map((answer, index) => `${courseCodes[index]}:\n\n ${answer}`).join('\n'),
+    response.map((answer, index) => `${courseCodes[index]}:\n ${answer}`).join('\n\n'),
     { reply_to_message_id: ctx.messageId }
   );
 });
