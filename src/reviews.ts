@@ -27,8 +27,7 @@ export async function generateCourseReviewSummary(code: string, question: string
         { 'role': 'system', 'content': REVIEW_SYSTEM_CHAT },
         { 'role': 'system', 'content': `Solo response para el Curso: ${course?.name}` },
         ...buildContextHistory(reviews as Review[]),
-        { 'role': 'system', 'content': REVIEW_INSTRUCTION_SYSTEM_CHAT },
-        { 'role': 'user', 'content': question },
+        { 'role': 'user', 'content': REVIEW_INSTRUCTION_SYSTEM_CHAT },
     ];
 
     return await generateChatAnswer(chatMessages);
