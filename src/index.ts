@@ -127,6 +127,14 @@ bot.command('review', async (ctx) => {
     response.push(answer);
   }
 
+  if (response.length === 0) {
+    await ctx.reply(
+      'No se encontraron cursos en el mensaje',
+      { reply_to_message_id: ctx.messageId }
+    );
+    return;
+  }
+
   await ctx.reply(
     response.map((answer, index) => `${courseCodes[index]}:\n ${answer}`).join('\n\n'),
     { reply_to_message_id: ctx.messageId }
