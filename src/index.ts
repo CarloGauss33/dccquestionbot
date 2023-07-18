@@ -2,7 +2,8 @@ import dotenv from 'dotenv';
 import SimpleNodeLogger from 'simple-node-logger';
 import { Context, Telegraf, Format } from 'telegraf';
 import { Update, Message } from 'typegram';
-import { getChatAnswer } from './openai';
+import { getChatAnswer, getTextsEmbedding } from './openai';
+import { generateCourseReviewSummary } from './reviews';
 
 dotenv.config();
 
@@ -47,7 +48,7 @@ function parseTelegramMessage(message: string | undefined) {
     return '';
   }
 
-  return message.replace('/ask', '').replace(`@${BOT_USERNAME}`, '');
+  return message.replace('/ask', '').replace(`@${BOT_USERNAME}`, '').replace('/review', '').trim();
 }
 
 bot.use((ctx, next) => {
@@ -68,6 +69,35 @@ bot.command('ask', async (ctx) => {
     parsedMessage as string,
     ctx.username as string
   );
+
+  log.info(`${ctx.username} - Answer: ${answer}`);
+
+  await ctx.reply(
+    answer,
+    { reply_to_message_id: ctx.messageId }
+  );
+});
+
+bot.command('embed', async (ctx) => {
+  log.info(`${ctx.username} - Embed: ${ctx.content}`);
+
+  const parsedMessage = parseTelegramMessage(ctx.content);
+  const answer = await getTextsEmbedding([parsedMessage as string]);
+
+  log.info(`${ctx.username} - Answer: ${answer}`);
+
+  await ctx.reply(
+    JSON.stringify(answer),
+    { reply_to_message_id: ctx.messageId }
+  );
+});
+
+bot.command('review', async (ctx) => {
+  log.info(`${ctx.username} - Review: ${ctx.content}`);
+
+  const parsedMessage = parseTelegramMessage(ctx.content);
+  const [courseCode, ...content] = parsedMessage.split(' ');
+  const answer = await generateCourseReviewSummary(courseCode, content.join(' '));
 
   log.info(`${ctx.username} - Answer: ${answer}`);
 
