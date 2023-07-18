@@ -4,9 +4,9 @@ import { buildPrompt, buildChatMessages, storeConversation} from './messages';
 
 dotenv.config();
 const TEMPERATURE = 0.1;
-const MAX_TOKENS = 300;
-const COMPLETION_MODEL = "text-davinci-003";
 const CHAT_MODEL = "gpt-3.5-turbo";
+const EMBEDDING_MODEL = "text-embedding-ada-002";
+
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
@@ -14,25 +14,52 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-async function getChatAnswer(question: string, username: string="") {
-    const processedQuestion = `${username}: ${question}`;
-    const messages = await buildChatMessages(processedQuestion, username);
+async function generateChatAnswer(
+    messages: any[],
+    username: string = "",
+    model: string = CHAT_MODEL,
+    temperature: number = TEMPERATURE
+    ) {
     const request = {
-        model: CHAT_MODEL,
-        temperature: TEMPERATURE,
-        messages: messages,
+        model: model,
+        temperature: temperature,
+        messages: messages
     };
 
     try {
         const response = await openai.createChatCompletion(request);
 
         const answer = response.data.choices[0].message?.content as string;
-        storeConversation(username, processedQuestion, answer);
+        storeConversation(username, messages[messages.length - 1].content, answer);
 
         return answer;
+    } catch (error) {
+        console.log(error);
+        return "No se pudo obtener una respuesta";
+    }
+}
+
+async function getChatAnswer(question: string, username: string="") {
+    const processedQuestion = `${username}: ${question}`;
+    const messages = await buildChatMessages(processedQuestion, username);
+
+    return await generateChatAnswer(messages, username);
+}
+
+async function getTextsEmbedding(texts: string[]) {
+    const request = {
+        model: EMBEDDING_MODEL,
+        input: texts,
+    };
+
+    try {
+        const response = await openai.createEmbedding(request);
+
+        return response.data;
     } catch (error) {
         return "No se pudo obtener una respuesta";
     }
 }
 
-export { getChatAnswer };
+
+export { getChatAnswer, getTextsEmbedding, generateChatAnswer };
