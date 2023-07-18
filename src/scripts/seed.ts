@@ -1,44 +1,31 @@
 import { PrismaClient } from '@prisma/client'
+import fs from 'fs';
+import { parse } from 'csv-parse';
 const prisma = new PrismaClient()
 
+
+
 async function main() {
-    await prisma.course.create({
-        data: {
-            code: 'IIC2133',
-            name: 'Estructuras de Datos y Algoritmos'
-        }
-    })
+    await prisma.review.deleteMany({});
+    await prisma.course.deleteMany({});
 
-    await prisma.course.create({
-        data: {
-            code: 'IIC2413',
-            name: 'Bases de Datos'
-        }
-    })
+    const CSV_PATH = './src/scripts/fixtures/courses.csv';
 
-    await prisma.review.create({
-        data: {
-            content: 'Me gustó mucho el curso, pero el profe es muy estricto',
-            username: 'demo',
-            course: {
-                connect: {
-                    code: 'IIC2133'
+    fs.createReadStream(CSV_PATH)
+        .pipe(parse({ delimiter: ';', from_line: 2 }))
+        .on('data', async (row) => {
+            const [code, name] = row;
+            const newCourse = await prisma.course.create({
+                data: {
+                    code: code.trim(),
+                    name: name.trim()
                 }
-            }
-        }
-    })
-
-    await prisma.review.create({
-        data: {
-            content: 'EL curso tiene 3 tarea, 2 controles y un proyecto',
-            username: 'demo',
-            course: {
-                connect: {
-                    code: 'IIC2133'
-                }
-            }
-        }
-    })
+            })
+        }).on('end', async () => {
+            console.log('CSV file successfully processed');
+        }).on('error', (err) => {
+            console.error(err);
+        });
 }
 
 main().then(async () => { await prisma.$disconnect() })
