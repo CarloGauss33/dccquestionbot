@@ -1,4 +1,4 @@
-import { insertMessage, getLastMessagesForUser, getLastNMessages } from './db';
+import { insertMessage, getLastMessagesForUser, getLastNMessages } from './history-db';
 import { type ChatCompletionRequestMessage } from "openai";
 
 const BASE_SYSTEM_CHAT = process.env.BASE_SYSTEM_CHAT || "Responde a dudas en un contexto de DCC PUC";
