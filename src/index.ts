@@ -3,7 +3,7 @@ import SimpleNodeLogger from 'simple-node-logger';
 import { Context, Telegraf, Format } from 'telegraf';
 import { Update, Message } from 'typegram';
 import { getChatAnswer, getTextsEmbedding } from './openai';
-import { generateCourseReviewSummary } from './reviews';
+import { generateCourseReviewSummary, createCourseReview, getCoursesInMessage } from './reviews';
 
 dotenv.config();
 
@@ -48,7 +48,7 @@ function parseTelegramMessage(message: string | undefined) {
     return '';
   }
 
-  return message.replace('/ask', '').replace(`@${BOT_USERNAME}`, '').replace('/review', '').trim();
+  return message.replace('/ask', '').replace(`@${BOT_USERNAME}`, '').replace('/review', '').replace('/addReview', '').trim();
 }
 
 bot.use((ctx, next) => {
@@ -92,7 +92,7 @@ bot.command('embed', async (ctx) => {
   );
 });
 
-bot.command('review', async (ctx) => {
+bot.command('fetchReview', async (ctx) => {
   log.info(`${ctx.username} - Review: ${ctx.content}`);
 
   const parsedMessage = parseTelegramMessage(ctx.content);
@@ -107,15 +107,45 @@ bot.command('review', async (ctx) => {
   );
 });
 
-bot.launch();
-process.once('SIGINT', async () => {
-  await sendGoodbyeMessage();
-  bot.stop('SIGINT');
-  log.info('Bot stopped at: ' + new Date().toISOString());
+bot.command('review', async (ctx) => {
+  log.info(`${ctx.username} - Review: ${ctx.content}`);
+
+  const parsedMessage = parseTelegramMessage(ctx.content);
+  const courseCodes = await getCoursesInMessage(parsedMessage);
+
+  if (courseCodes.length === 0) {
+    await ctx.reply(
+      'No se encontraron cursos en el mensaje',
+      { reply_to_message_id: ctx.messageId }
+    );
+    return;
+  }
+
+  const response = [];
+  for (const courseCode of courseCodes) {
+    const answer = await generateCourseReviewSummary(courseCode, parsedMessage);
+    response.push(answer);
+  }
+
+  await ctx.reply(
+    response.map((answer, index) => `${courseCodes[index]}:\n\n ${answer}`).join('\n'),
+    { reply_to_message_id: ctx.messageId }
+  );
 });
 
-process.once('SIGTERM', async () => {
-  await sendGoodbyeMessage();
-  bot.stop('SIGTERM');
-  log.info('Bot stopped at: ' + new Date().toISOString());
+bot.command('addReview', async (ctx) => {
+  log.info(`${ctx.username} - Add Review: ${ctx.content}`);
+
+  const parsedMessage = parseTelegramMessage(ctx.content);
+  const [courseCode, ...content] = parsedMessage.split(' ');
+  const answer = await createCourseReview(courseCode, content.join(' '), ctx.username as string);
+
+  log.info(`${ctx.username} - Answer: ${answer}`);
+  await ctx.reply(
+    `Se añadio la review al curso ${courseCode} correctamente`,
+    { reply_to_message_id: ctx.messageId }
+  );
 });
+
+
+bot.launch();
