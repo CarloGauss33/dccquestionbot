@@ -30,7 +30,9 @@ async function generateChatAnswer(
         const response = await openai.createChatCompletion(request);
 
         const answer = response.data.choices[0].message?.content as string;
-        storeConversation(username, messages[messages.length - 1].content, answer);
+        if (!!username) {
+            storeConversation(username, messages[messages.length - 1].content, answer);
+        }
 
         return answer;
     } catch (error) {
