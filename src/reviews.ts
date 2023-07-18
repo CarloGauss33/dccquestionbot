@@ -59,7 +59,7 @@ export async function getCoursesInMessage(content: string) {
     const chatMessages = [
         { 'role': 'system', 'content': 'A continuación una lista de los cursos existentes con codigo - nombre' },
         { 'role': 'system', 'content': coursesTupleString },
-        { 'role': 'system', 'content': 'El usuario enviara un mensaje preguntando sobre distintos cursos. Debes identificar los codigos asociados a los nombres que menciona el usuario. Solo retorna una lista de codigos separados por comas en el formato codigo1, codigo2, codigo3' },
+        { 'role': 'system', 'content': 'El usuario enviara un mensaje preguntando sobre distintos cursos. Debes identificar los codigos asociados a los nombres que menciona el usuario. Solo retorna una lista de codigos separados por comas en el formato codigo1, codigo2, codigo3. En caso de no identificar ninguno responde con un espacio vacio.' },
         { 'role': 'user', 'content': content },
     ] as any[];
 

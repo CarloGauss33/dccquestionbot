@@ -113,7 +113,7 @@ bot.command('review', async (ctx) => {
   const parsedMessage = parseTelegramMessage(ctx.content);
   const courseCodes = await getCoursesInMessage(parsedMessage);
 
-  if (courseCodes.length === 0) {
+  if (courseCodes.length === 0 || courseCodes[0].length === 0) {
     await ctx.reply(
       'No se encontraron cursos en el mensaje',
       { reply_to_message_id: ctx.messageId }
