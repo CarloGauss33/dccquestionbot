@@ -23,14 +23,19 @@ export async function generateCourseReviewSummary(code: string, question: string
     const reviews = await getCourseReviews(code);
     const course = await getCourse(code);
 
-    const chatMessages = [
-        { 'role': 'system', 'content': REVIEW_SYSTEM_CHAT },
-        { 'role': 'system', 'content': `Solo response para el Curso: ${course?.name}` },
-        ...buildContextHistory(reviews as Review[]),
-        { 'role': 'user', 'content': REVIEW_INSTRUCTION_SYSTEM_CHAT },
-    ];
+    if(course)
+    {
+        const chatMessages = [
+            { 'role': 'system', 'content': REVIEW_SYSTEM_CHAT },
+            { 'role': 'system', 'content': `Solo responde para el Curso: ${course?.name}` },
+            ...buildContextHistory(reviews as Review[]),
+            { 'role': 'user', 'content': REVIEW_INSTRUCTION_SYSTEM_CHAT },
+        ];
 
-    return await generateChatAnswer(chatMessages);
+        return await generateChatAnswer(chatMessages);
+    }
+    else 
+        return '';
 }
 
 export async function createCourseReview(code: string, review: string, username: string) {
@@ -63,7 +68,11 @@ export async function getCoursesInMessage(content: string) {
         { 'role': 'user', 'content': content },
     ] as any[];
 
-    const coursesCodes = await generateChatAnswer(chatMessages, '', 'gpt-4');
+    const coursesCodes = await generateChatAnswer(chatMessages, '', "gpt-4");
+
+    if(coursesCodes == "No se pudo obtener una respuesta")
+        return []
+
     return coursesCodes.split(',').map((code) => code.trim());
 }
 

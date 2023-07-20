@@ -1,17 +1,17 @@
 import { PrismaClient } from '@prisma/client'
+import { addCourseReview } from '../models/review'
 import fs from 'fs';
 import { parse } from 'csv-parse';
 const prisma = new PrismaClient()
-
-
 
 async function main() {
     await prisma.review.deleteMany({});
     await prisma.course.deleteMany({});
 
-    const CSV_PATH = './src/scripts/fixtures/courses.csv';
+    const CSV_COURSES_PATH = './src/scripts/fixtures/courses.csv';
+    const CSV_REVIEWS_PATH = './src/scripts/fixtures/reviews.csv';
 
-    fs.createReadStream(CSV_PATH)
+    fs.createReadStream(CSV_COURSES_PATH)
         .pipe(parse({ delimiter: ';', from_line: 2 }))
         .on('data', async (row) => {
             const [code, name] = row;
@@ -22,10 +22,22 @@ async function main() {
                 }
             })
         }).on('end', async () => {
-            console.log('CSV file successfully processed');
+            console.log('CSV courses file successfully processed');
         }).on('error', (err) => {
             console.error(err);
         });
+
+    fs.createReadStream(CSV_REVIEWS_PATH)
+    .pipe(parse({ delimiter: ';', from_line: 2, relax_quotes: true }))
+    .on('data', async (row) => {
+        const [code, username, content] = row;
+        await addCourseReview(code, content, username)
+
+    }).on('end', async () => {
+        console.log('CSV reviews file successfully processed');
+    }).on('error', (err) => {
+        console.error(err);
+    });
 }
 
 main().then(async () => { await prisma.$disconnect() })
