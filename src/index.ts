@@ -3,7 +3,7 @@ import SimpleNodeLogger from 'simple-node-logger';
 import { Context, Telegraf, Format } from 'telegraf';
 import { Update, Message } from 'typegram';
 import { getChatAnswer, getTextsEmbedding } from './openai';
-import { generateCourseReviewSummary, createCourseReview, getCoursesInMessage } from './reviews';
+import { generateCourseReviewSummary, createCourseReview, getCoursesInMessage, generateCourseReviewStats } from './reviews';
 
 dotenv.config();
 
@@ -151,6 +151,18 @@ bot.command('addReview', async (ctx) => {
   log.info(`${ctx.username} - Answer: ${answer}`);
   await ctx.reply(
     `Se añadio la review al curso ${courseCode} correctamente`,
+    { reply_to_message_id: ctx.messageId }
+  );
+});
+
+bot.command('stats', async (ctx) => {
+  log.info(`${ctx.username} - Stats: ${ctx.content}`);
+
+  const answer = await generateCourseReviewStats();
+
+  log.info(`${ctx.username} - Answer: ${answer}`);
+  await ctx.reply(
+    answer,
     { reply_to_message_id: ctx.messageId }
   );
 });
