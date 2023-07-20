@@ -1,5 +1,5 @@
 import { Review } from '@prisma/client';
-import { getCourseReviews, addCourseReview } from './models/review';
+import { getCourseReviews, addCourseReview, getCourseReviewStats } from './models/review';
 import { getCourse, createCourse, getAllCoursesTuplesAndCodes} from './models/course';
 import { getChatAnswer, generateChatAnswer, getTextsEmbedding } from './openai';
 
@@ -74,4 +74,11 @@ export async function getCoursesInMessage(content: string) {
         return []
 
     return coursesCodes.split(',').map((code) => code.trim());
+}
+
+export async function generateCourseReviewStats() {
+    const answer = await getCourseReviewStats() as { code: string; count: number; courseName: string }[];
+
+    const message = 'Estadisticas de Reviews:';
+    return message + '\n' + answer.map((course) => `${course.code} - ${course.courseName}: ${course.count}`).join('\n');
 }

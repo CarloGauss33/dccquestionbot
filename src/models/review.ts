@@ -49,3 +49,28 @@ export async function getCourseReviews(course_code: string) {
     })
     return reviews;
 }
+
+export async function getCourseReviewStats(){
+    const courseReviews = await prisma.review.groupBy({
+        by: ['courseId'],
+        _count: {
+            content: true
+        }
+    })
+
+    const courseReviewStatsWithCode = await Promise.all(courseReviews.map(async (courseReview) => {
+        const course = await prisma.course.findUnique({
+            where: {
+                id: courseReview.courseId
+            }
+        })
+
+        return {
+            count: courseReview._count.content,
+            code: course?.code,
+            courseName: course?.name
+        }
+    }))
+
+    return courseReviewStatsWithCode;
+}
