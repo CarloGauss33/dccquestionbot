@@ -34,15 +34,6 @@ async function fetchOpenaiAnswer(
   return await getChatAnswer(question, username) as string;
 }
 
-
-async function sendGoodbyeMessage() {
-  if (!BROADCAST_CHAT_ID) {
-    return;
-  }
-
-  await telegram.sendMessage(BROADCAST_CHAT_ID, 'Me voy a dormir... 😴');
-}
-
 function parseTelegramMessage(message: string | undefined) {
   if (!message) {
     return '';
@@ -53,8 +44,7 @@ function parseTelegramMessage(message: string | undefined) {
 
 async function replyToMessage(message: string, ctx: MessageContext) {
   try {
-    const answer = await fetchOpenaiAnswer(message, ctx.username as string);
-    await ctx.reply(answer, { reply_to_message_id: ctx.messageId });
+    await ctx.reply(message, { reply_to_message_id: ctx.messageId });
   } catch (error) {
     log.error(error);
   }
