@@ -5,8 +5,11 @@
   "main": "index.js",
   "dependencies": {
     "@prisma/client": "5.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.2.0",
+    "@typescript-eslint/parser": "^6.2.0",
     "csv-parse": "^5.4.0",
     "dotenv": "^16.0.3",
+    "eslint": "^8.46.0",
     "jsdom": "^22.1.0",
     "openai": "^3.2.0",
     "pg": "^8.11.1",
@@ -26,7 +29,8 @@
   },
   "scripts": {
     "build": "npx tsc",
-    "start": "npx tsc && node build/index.js"
+    "start": "npx tsc && node build/index.js",
+    "lint": "eslint . --ext .ts"
   },
   "repository": {
     "type": "git",
