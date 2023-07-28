@@ -55,8 +55,8 @@ export async function getCourseReviewStats(){
         by: ['courseId'],
         _count: {
             content: true
-        }
-    })
+        },
+    });
 
     const courseReviewStatsWithCode = await Promise.all(courseReviews.map(async (courseReview) => {
         const course = await prisma.course.findUnique({
@@ -72,5 +72,5 @@ export async function getCourseReviewStats(){
         }
     }))
 
-    return courseReviewStatsWithCode;
+    return courseReviewStatsWithCode.sort((a, b) => b.count - a.count);
 }
