@@ -1,9 +1,8 @@
 import { Review } from '@prisma/client';
-import { getCourseReviews, addCourseReview, getCourseReviewStats } from './models/review';
-import { getCourse, createCourse, getAllCoursesTuplesAndCodes} from './models/course';
-import { getChatAnswer, generateChatAnswer, getTextsEmbedding } from './openai';
+import { getCourseReviews, addCourseReview, getCourseReviewStats } from '../models/review';
+import { getCourse, getAllCoursesTuplesAndCodes} from '../models/course';
+import { generateChatAnswer } from './openai';
 
-const BASE_SYSTEM_CHAT = process.env.BASE_SYSTEM_CHAT || "Responde a dudas en un contexto de DCC PUC";
 const REVIEW_SYSTEM_CHAT = process.env.REVIEW_SYSTEM_CHAT || "Revisa las preguntas que se han hecho sobre el curso";
 const REVIEW_INSTRUCTION_SYSTEM_CHAT = process.env.REVIEW_INSTRUCTION_SYSTEM_CHAT || "Escribe tu pregunta sobre el curso";
 const PROCESS_REVIEW_SYSTEM_CHAT = process.env.PROCESS_REVIEW_SYSTEM_CHAT || "Procesando tu pregunta...";

@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
 import SimpleNodeLogger from 'simple-node-logger';
-import { Context, Telegraf, Format } from 'telegraf';
+import { Context, Telegraf } from 'telegraf';
 import { Update, Message } from 'typegram';
-import { getChatAnswer, getTextsEmbedding } from './openai';
-import { generateCourseReviewSummary, createCourseReview, getCoursesInMessage, generateCourseReviewStats } from './reviews';
+import { getChatAnswer, getTextsEmbedding } from './services/openai';
+import { generateCourseReviewSummary, createCourseReview, getCoursesInMessage, generateCourseReviewStats } from './services/reviews';
 
 dotenv.config();
 

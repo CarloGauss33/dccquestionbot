@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
-import { Configuration, OpenAIApi, type ChatCompletionRequestMessage } from "openai";
-import { buildPrompt, buildChatMessages, storeConversation} from './messages';
+import { Configuration, OpenAIApi } from "openai";
+import { buildChatMessages, storeConversation} from './messages';
 
 dotenv.config();
 const TEMPERATURE = 0.1;
