@@ -51,6 +51,15 @@ function parseTelegramMessage(message: string | undefined) {
   return message.replace('/ask', '').replace(`@${BOT_USERNAME}`, '').replace('/review', '').replace('/addReview', '').trim();
 }
 
+async function replyToMessage(message: string, ctx: MessageContext) {
+  try {
+    const answer = await fetchOpenaiAnswer(message, ctx.username as string);
+    await ctx.reply(answer, { reply_to_message_id: ctx.messageId });
+  } catch (error) {
+    log.error(error);
+  }
+}
+
 bot.use((ctx, next) => {
   ctx.content = (ctx.message as Message.TextMessage)?.text;
   ctx.username = ctx.message?.from?.username;
@@ -72,10 +81,7 @@ bot.command('ask', async (ctx) => {
 
   log.info(`${ctx.username} - Answer: ${answer}`);
 
-  await ctx.reply(
-    answer,
-    { reply_to_message_id: ctx.messageId }
-  );
+  await replyToMessage(answer, ctx);
 });
 
 bot.command('embed', async (ctx) => {
@@ -86,10 +92,7 @@ bot.command('embed', async (ctx) => {
 
   log.info(`${ctx.username} - Answer: ${answer}`);
 
-  await ctx.reply(
-    JSON.stringify(answer),
-    { reply_to_message_id: ctx.messageId }
-  );
+  await replyToMessage(JSON.stringify(answer), ctx);
 });
 
 bot.command('fetchReview', async (ctx) => {
@@ -101,10 +104,7 @@ bot.command('fetchReview', async (ctx) => {
 
   log.info(`${ctx.username} - Answer: ${answer}`);
 
-  await ctx.reply(
-    answer,
-    { reply_to_message_id: ctx.messageId }
-  );
+  await replyToMessage(answer, ctx);
 });
 
 bot.command('review', async (ctx) => {
@@ -130,16 +130,16 @@ bot.command('review', async (ctx) => {
   }
 
   if (response.length === 0) {
-    await ctx.reply(
+    await replyToMessage(
       'No se encontraron cursos en el mensaje',
-      { reply_to_message_id: ctx.messageId }
+      ctx
     );
     return;
   }
 
-  await ctx.reply(
+  await replyToMessage(
     response.map((answer, index) => `${courseCodes[index]}:\n ${answer}`).join('\n\n'),
-    { reply_to_message_id: ctx.messageId }
+    ctx
   );
 });
 
@@ -151,9 +151,9 @@ bot.command('addReview', async (ctx) => {
   const answer = await createCourseReview(courseCode, content.join(' '), ctx.username as string);
 
   log.info(`${ctx.username} - Answer: ${answer}`);
-  await ctx.reply(
+  await replyToMessage(
     `Se añadio la review al curso ${courseCode} correctamente`,
-    { reply_to_message_id: ctx.messageId }
+    ctx
   );
 });
 
@@ -163,9 +163,9 @@ bot.command('stats', async (ctx) => {
   const answer = await generateCourseReviewStats();
 
   log.info(`${ctx.username} - Answer: ${answer}`);
-  await ctx.reply(
+  await replyToMessage(
     answer,
-    { reply_to_message_id: ctx.messageId }
+    ctx
   );
 });
 
