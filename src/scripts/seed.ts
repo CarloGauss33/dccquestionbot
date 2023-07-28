@@ -15,7 +15,7 @@ async function main() {
         .pipe(parse({ delimiter: ';', from_line: 2 }))
         .on('data', async (row) => {
             const [code, name] = row;
-            const newCourse = await prisma.course.create({
+            await prisma.course.create({
                 data: {
                     code: code.trim(),
                     name: name.trim()

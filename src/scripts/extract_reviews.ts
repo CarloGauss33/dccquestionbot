@@ -15,7 +15,7 @@ async function getCourseCodesFromCsv() {
 
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i];
-    const [code, _] = line.split(';');
+    const [code, ] = line.split(',');
     courseCodes.push(code);
   }
 

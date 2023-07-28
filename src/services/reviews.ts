@@ -29,16 +29,17 @@ export async function generateCourseReviewSummary(code: string, question: string
             { 'role': 'system', 'content': `Solo responde para el Curso: ${course?.name}` },
             ...buildContextHistory(reviews as Review[]),
             { 'role': 'user', 'content': REVIEW_INSTRUCTION_SYSTEM_CHAT },
+            { 'role': 'user', 'content': `El usuario pregunta: ${question}` },
         ];
 
-        return await generateChatAnswer(chatMessages);
+        return await generateChatAnswer(chatMessages as { role: string, content: string }[]);
+    } else {
+        return 'No se encontro el curso';
     }
-    else 
-        return '';
 }
 
 export async function createCourseReview(code: string, review: string, username: string) {
-    let course = await getCourse(code);
+    const course = await getCourse(code);
 
     if (!course) {
         return null;
@@ -65,7 +66,7 @@ export async function getCoursesInMessage(content: string) {
         { 'role': 'system', 'content': coursesTupleString },
         { 'role': 'system', 'content': 'El usuario enviara un mensaje preguntando sobre distintos cursos. Debes identificar los codigos asociados a los nombres que menciona el usuario. Solo retorna una lista de codigos separados por comas en el formato codigo1, codigo2, codigo3. En caso de no identificar ninguno responde con un espacio vacio.' },
         { 'role': 'user', 'content': content },
-    ] as any[];
+    ] as { role: string, content: string }[];
 
     const coursesCodes = await generateChatAnswer(chatMessages, '', "gpt-4");
 

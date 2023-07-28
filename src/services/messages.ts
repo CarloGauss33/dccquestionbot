@@ -22,7 +22,7 @@ export async function buildChatHistory(username: string = '', nMessages: number 
     return messages;
 }
 
-export async function buildChatMessages(question: string, username: string="") {
+export async function buildChatMessages(question: string) {
     const startMessage = { 'role': 'system', 'content': `${BASE_SYSTEM_CHAT}` };
     const lastMessage = { 'role': 'user', 'content': question };
     const chatHistory =  await buildChatHistory();

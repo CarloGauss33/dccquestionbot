@@ -5,11 +5,6 @@ import path from 'path';
 
 const BASEURL = 'https://buscacursos.uc.cl/';
 
-interface Course {
-    code: string;
-    name: string;
-}
-
 async function getPage(semester: string, startCode: string) {
     const uri = `${BASEURL}?cxml_semestre=${semester}&cxml_sigla=${startCode}`;
 

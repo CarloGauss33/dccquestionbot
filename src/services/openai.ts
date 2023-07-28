@@ -1,12 +1,11 @@
 import dotenv from 'dotenv';
-import { Configuration, OpenAIApi } from "openai";
+import { Configuration, OpenAIApi, type CreateChatCompletionRequest } from "openai";
 import { buildChatMessages, storeConversation} from './messages';
 
 dotenv.config();
 const TEMPERATURE = 0.1;
 const CHAT_MODEL = "gpt-3.5-turbo";
 const EMBEDDING_MODEL = "text-embedding-ada-002";
-
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
@@ -15,7 +14,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 async function generateChatAnswer(
-    messages: any[],
+    messages: { role: string, content: string }[],
     username: string = "",
     model: string = CHAT_MODEL,
     temperature: number = TEMPERATURE
@@ -24,7 +23,7 @@ async function generateChatAnswer(
         model: model,
         temperature: temperature,
         messages: messages
-    };
+    } as CreateChatCompletionRequest;
 
     try {
         const response = await openai.createChatCompletion(request);
@@ -43,7 +42,7 @@ async function generateChatAnswer(
 
 async function getChatAnswer(question: string, username: string="") {
     const processedQuestion = `${username}: ${question}`;
-    const messages = await buildChatMessages(processedQuestion, username);
+    const messages = await buildChatMessages(processedQuestion);
 
     return await generateChatAnswer(messages, username);
 }

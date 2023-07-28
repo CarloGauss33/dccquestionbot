@@ -8,7 +8,6 @@ import { generateCourseReviewSummary, createCourseReview, getCoursesInMessage, g
 dotenv.config();
 
 const BOT_USERNAME = process.env.BOT_NAME || '';
-const BROADCAST_CHAT_ID = process.env.BROADCAST_CHAT_ID || '';
 
 const log = SimpleNodeLogger.createSimpleLogger('logs/questions.log');
 
@@ -20,7 +19,6 @@ interface MessageContext extends Context<Update> {
 
 const bot_token: string = process.env.TELEGRAM_TOKEN as string;
 const bot: Telegraf<MessageContext> = new Telegraf(bot_token);
-const telegram = bot.telegram;
 
 log.info('Bot started at: ' + new Date().toISOString());
 
